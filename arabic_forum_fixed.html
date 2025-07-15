@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arabic Community - منتدى المطورين العرب</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a, #1a1a2e, #16213e, #0f3460);
+            background-size: 400% 400%;
+            animation: gradientShift 15s ease infinite;
+            color: #ffffff;
+            min-height: 100vh;
+            direction: rtl;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Floating particles background */
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(79, 172, 254, 0.6);
+            border-radius: 50%;
+            animation: float 20s infinite linear;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        header {
+            background: rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(79, 172, 254, 0.3);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.5s ease;
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #4facfe, #00f2fe, #ff6b6b);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: logoShimmer 3s ease-in-out infinite;
+            cursor: pointer;
+        }
+
+        @keyframes logoShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #ffffff;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            border-radius: 20px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-links a:hover::before {
+            opacity: 0.2;
+        }
+
+        .nav-links a:hover {
+            color: #4facfe;
+            transform: translateY(-2px);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn {
+            padding: 0.7rem 1.5rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: #ffffff;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(79, 172, 254, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ffffff;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+            border-color: #4facfe;
+            transform: translateY(-2px);
+        }
+
+        main {
+            margin-top: 80px;
+            padding: 2rem 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero {
+            text-align: center;
+            padding: 6rem 0;
+            background: linear-gradient(135deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.1));
+            border-radius: 30px;
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(79, 172, 254, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #4facfe, #00f2fe, #ff6b6b, #4facfe);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textShimmer 4s ease-in-out infinite;
+        }
+
+        @keyframes textShimmer {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+            animation: fadeInUp 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 0.9;
+                transform: translateY(0);
+            }
+        }
+
+        .forum-sections {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .section-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transform: translateY(0);
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            transform: scaleX(0);
+            transition: transform 0.4s ease;
+        }
+
+        .section-card::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, rgba(79, 172, 254, 0.1), rgba(0, 242, 254, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .section-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .section-card:hover::after {
+            opacity: 1;
+        }
+
+        .section-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border-color: #4facfe;
+        }
+
+        .section-card:active {
+            transform: translateY(-8px) scale(0.98);
+        }
+
+        .section-icon {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.9;
+            animation: bounce 2s infinite;
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
+        }
+
+        .section-title {
+            font-size: 1.6rem;
+            margin-bottom: 1rem;
+            color: #4facfe;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-description {
+            opacity: 0.8;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .section-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            z-index: 2;
+        }
+
+        .stat {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #4facfe;
+            animation: countUp 2s ease-out;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.7;
+        }
+
+        /* Auth Forms */
+        .auth-container {
+            max-width: 400px;
+            margin: 2rem auto;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(79, 172, 254, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .auth-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .auth-container h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #4facfe;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #4facfe;
+            box-shadow: 0 0 20px rgba(79, 172, 254, 0.3);
+        }
+
+        .form-group input::placeholder {
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(45deg, #4facfe, #00f2fe);
+            color: #ffffff;
+            border: none;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+
+        .auth-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(79, 172, 254, 0.4);
+        }
+
+        .auth-link {
+            text-align: center;
+            color: #4facfe;
+            cursor: pointer;
+            text-decoration: underline;
+            transition: all 0.3s ease;
+        }
+
+        .auth-link:hover {
+            color: #00f2fe;
+        }
+
+        .back-btn {
+            background: linear-gradient(45deg, #ff6b6b, #ff4757);
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin-bottom: 2rem;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(255, 107, 107, 0.3);
+        }
+
+        /* About Page */
+        .about-container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 3rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            margin-bottom: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(79, 172, 254, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        .about-content {
+            position: relative;
+            z-index: 2;
+        }
+
+        .about-container h2 {
+            color: #4facfe;
+            margin-bottom: 2rem;
+            font-size: 2.5rem;
+            text-align: center;
+        }
+
+        .about-container p {
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .designer-info {
+            background: rgba(79, 172, 254, 0.1);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+            border: 1px solid rgba(79, 172, 254, 0.3);
+        }
+
+        .designer-info h3 {
+            color: #4facfe;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+        }
+
+        .success-message {
+            background: linear-gradient(45deg, #00ff88, #00cc6a);
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-message {
+            background: linear-gradient(45deg, #ff6b6b, #ff4757);
+            color: #ffffff;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1rem;
+            text-align: center;
+            font-weight: 600;
+            animation: slideIn 0.5s ease-out;
+        }
+
+        footer {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 2rem 0;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            margin-top: 3rem;
+        }
+
+        .mobile-menu {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu {
+                display: block;
+                background: none;
+                border: none;
+                color: #ffffff;
+                font-size: 1.5rem;
+                cursor: pointer;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .forum-sections {
+                grid-template-columns: 1fr;
+            }
+
+            .section-stats {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .auth-container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating particles -->
+    <div class="particles" id="particles"></div>
+
+    <header>
+        <div class="container">
+            <nav>
+                <div class="logo" onclick="showPage('home')">Arabic Community</div>
+                <ul class="nav-links">
+                    <li><a onclick="showPage('home')">الرئيسية</a></li>
+                    <li><a onclick="showPage('sections')">الأقسام</a></li>
+                    <li><a onclick="showPage('members')">الأعضاء</a></li>
+                    <li><a onclick="showPage('about')">حول المنتدى</a></li>
+                </ul>
+                <div class="user-actions">
+                    <button class="btn btn-secondary" onclick="showPage('login')">تسجيل الدخول</button>
+                    <button class="btn btn-primary" onclick="showPage('register')">إنشاء حساب</button>
+                </div>
+                <button class="mobile-menu">☰</button>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <div class="container">
+            <!-- Home Page -->
+            <div id="home" class="page active">
+                <section class="hero">
+                    <div class="hero-content">
+                        <h1>مرحباً بك في Arabic Community</h1>
+                        <p>المنتدى الأول للمطورين العرب - مكان للتعلم والمشاركة والنمو المهني</p>
+                        <button class="btn btn-primary" onclick="showPage('register')">انضم إلينا الآن</button>
+                    </div>
+                </section>
+
+                <section class="forum-sections" id="sections">
+                    <div class="section-card" onclick="openSection('games')">
+                        <div class="section-icon">🎮</div>
+                        <h3 class="section-title">تطوير الألعاب</h3>
+                        <p class="section-description">مناقشات حول تطوير الألعاب، محركات الألعاب، التصميم والجرافيك</p>
+                        <div class="section-stats">
+                            <div class="stat">
+                                <div class="stat-number">1,247</div>
+                                <div class="stat-label">موضوع</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">8,934</div>
+                                <div class="stat-label">مشاركة</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">532</div>
+                                <div class="stat-label">عضو</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card" onclick="openSection('mobile')">
+                        <div class="section-icon">📱</div>
+                        <h3 class="section-title">تطوير تطبيقات الهاتف</h3>
+                        <p class="section-description">Android, iOS, Flutter, React Native وكل ما يتعلق بتطوير التطبيقات المحمولة</p>
+                        <div class="section-stats">
+                            <div class="stat">
+                                <div class="stat-number">2,156</div>
+                                <div class="stat-label">موضوع</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">15,789</div>
+                                <div class="stat-label">مشاركة</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">891</div>
+                                <div class="stat-label">عضو</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card" onclick="openSection('desktop')">
+                        <div class="section-icon">💻</div>
+                        <h3 class="section-title">تطوير برامج الكمبيوتر</h3>
+                        <p class="section-description">تطوير تطبيقات سطح المكتب، لغات البرمجة، الأدوات والتقنيات</p>
+                        <div class="section-stats">
+                            <div class="stat">
+                                <div class="stat-number">1,834</div>
+                                <div class="stat-label">موضوع</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">12,456</div>
+                                <div class="stat-label">مشاركة</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">678</div>
+                                <div class="stat-label">عضو</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card" onclick="openSection('web')">
+                        <div class="section-icon">🌐</div>
+                        <h3 class="section-title">تطوير مواقع الويب</h3>
+                        <p class="section-description">HTML, CSS, JavaScript, إطارات العمل، والتطوير الأمامي والخلفي</p>
+                        <div class="section-stats">
+                            <div class="stat">
+                                <div class="stat-number">3,245</div>
+                                <div class="stat-label">موضوع</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">21,567</div>
+                                <div class="stat-label">مشاركة</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">1,234</div>
+                                <div class="stat-label">عضو</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card" onclick="openSection('security')">
+                        <div class="section-icon">🔒</div>
+                        <h3 class="section-title">الأمن السيبراني</h3>
+                        <p class="section-description">أمن المعلومات، الاختراق الأخلاقي، حماية الأنظمة والشبكات</p>
+                        <div class="section-stats">
+                            <div class="stat">
+                                <div class="stat-number">945</div>
+                                <div class="stat-label">موضوع</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">6,789</div>
+                                <div class="stat-label">مشاركة</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">423</div>
+                                <div class="stat-label">عضو</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card" onclick="openSection('it')">
+                        <div class="section-icon">⚙️</div>
+                        <h3 class="section-title">تقنية المعلومات</h3>
+                        <p class="section-description">إدارة الأنظمة، الشبكات، قواعد البيانات، والبنية التحتية</p>
+                        <div class="section-stats">
+                            <div class="stat">
+                                <div class="stat-number">1,567</div>
+                                <div class="stat-label">موضوع</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">9,876</div>
+                                <div class="stat-label">مشاركة</div>
+                            </div>
+                            <div class="stat">
+                                <div class="stat-number">654</div>
+                                <div class="stat-label">عضو</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Login Page -->
+            <div id="login" class="page">
+                <div class="auth-container">
+                    <div class="auth-content">
+                        <button class="back-btn" onclick="showPage('home')">← العودة للرئيسية</button>
+                        <h2>تسجيل الدخول</h2>
+                        <div id="loginMessage"></div>
+                        <form id="loginForm">
+                            <div class="form-group">
+                                <label for="loginEmail">البريد الإلكتروني:</label>
+                                <input type="email" id="loginEmail" name="email" placeholder="أدخل بريدك الإلكتروني" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="loginPassword">كلمة المرور:</label>
+                                <input type="password" id="loginPassword" name="password" placeholder="أدخل كلمة المرور" required>
+                            </div>
+                            <button type="submit" class="auth-btn">تسجيل الدخول</button>
+                        </form>
+                        <p class="auth-link" onclick="showPage('register')">ليس لديك حساب؟ إنشاء حساب جديد</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Register Page -->
+            <div id="register" class="page">
+                <div class="auth-container">
+                    <div class="auth-content">
+                        <button class="back-btn" onclick="showPage('home')">← العودة للرئيسية</button>
+                        <h2>إنشاء حساب جديد</h2>
+                        <div id="registerMessage"></div>
+                        <form id="registerForm">
+                            <div class="form-group">
+                                <label for="registerUsername">اسم المستخدم:</label>
+                                <input type="text"
